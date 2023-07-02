@@ -1,0 +1,18 @@
+query BlockTimestamp($start: BigInt!, $end: BigInt!) {
+  blocks(
+    first: 1
+    orderBy: timestamp
+    orderDirection: asc
+    where: { timestamp_gt: $start, timestamp_lt: $end }
+  ) {
+    number
+    timestamp
+  }
+}
+
+query Block($number: BigInt!) {
+  blocks(where: { number: $number }) {
+    number
+    timestamp
+  }
+}

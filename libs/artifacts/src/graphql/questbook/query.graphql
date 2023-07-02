@@ -1,0 +1,72 @@
+fragment QuestAll on Quest {
+  id
+  ethereumId
+  title
+  description
+  imageURI
+  requiredPoints
+  objectives {
+    id
+    title
+    description
+    points
+  }
+  userQuest(userId: $userId) @include(if: $hasUser) {
+    id
+    signature
+    complete
+    completedAt
+    progress
+    objectives {
+      id
+      complete
+      completedAt
+      progress
+    }
+  }
+}
+
+query User($userId: ID!) {
+  user(userId: $userId) {
+    id
+    optInQueue
+  }
+}
+
+query Quests($userId: ID!, $hasUser: Boolean!) {
+  quests(userId: $userId) {
+    ...QuestAll
+  }
+}
+
+query Quest($questId: ID!, $userId: ID!, $hasUser: Boolean!) {
+  quest(questId: $questId, userId: $userId) {
+    ...QuestAll
+  }
+}
+
+mutation UpdateQuest($userId: ID!, $questId: ID!, $hasUser: Boolean!) {
+  updateQuest(userId: $userId, questId: $questId) {
+    ...QuestAll
+  }
+}
+
+mutation UpdateQuests($userId: ID!, $hasUser: Boolean!) {
+  updateQuests(userId: $userId) {
+    ...QuestAll
+  }
+}
+
+mutation QueueOptIn($userId: ID!, $signature: String!) {
+  queueOptIn(userId: $userId, signature: $signature) {
+    id
+    optInQueue
+  }
+}
+
+mutation QueueOptOut($userId: ID!, $signature: String!) {
+  queueOptOut(userId: $userId, signature: $signature) {
+    id
+    optInQueue
+  }
+}

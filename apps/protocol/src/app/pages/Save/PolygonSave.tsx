@@ -1,0 +1,218 @@
+import { useMemo, useState } from 'react'
+
+import { TabCard, ThemedSkeleton, Tooltip } from '@apps/dumb-components'
+import { useSelectedMassetState } from '@apps/masset-hooks'
+import { ViewportWidth } from '@apps/theme'
+import CountUp from 'react-countup'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
+
+import { DailyApys } from '../../components/stats/DailyApys'
+import { ProtocolPageHeader as PageHeader } from '../ProtocolPageHeader'
+import { OnboardingProvider, StakingRewardsProvider, useStakingRewards } from './hooks'
+import { SaveDeposit } from './v2/SaveDeposit'
+import { SaveRedeem } from './v2/SaveRedeem'
+import { SaveStake } from './v2/SaveStake'
+
+import type { FC } from 'react'
+
+enum Tabs {
+  Deposit = 'Deposit',
+  Redeem = 'Redeem',
+  Stake = 'Stake',
+}
+
+const tabs = {
+  [Tabs.Deposit]: {
+    title: `Deposit`,
+    component: <SaveDeposit />,
+  },
+  [Tabs.Redeem]: {
+    title: `Redeem`,
+    component: <SaveRedeem />,
+  },
+  [Tabs.Stake]: {
+    title: `Stake`,
+    component: <SaveStake />,
+  },
+}
+
+const Card = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  padding: 1rem 0.5rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  text-align: center;
+
+  div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    max-width: 20ch;
+    line-height: 1.75rem;
+    margin-bottom: 1rem;
+    color: ${({ theme }) => (theme.isLight ? `#643e7c` : `#f5cbff`)};
+  }
+
+  p {
+    color: ${({ theme }) => theme.color.bodyAccent};
+  }
+
+  span {
+    color: ${({ theme }) => (theme.isLight ? `#643e7c` : `#f5cbff`)};
+    &.numeric {
+      ${({ theme }) => theme.mixins.numeric};
+    }
+  }
+
+  > span:last-child {
+    display: none;
+  }
+
+  @media (min-width: ${ViewportWidth.m}) {
+    padding: 0 0.5rem 1rem 1.25rem;
+    text-align: left;
+    justify-content: space-between;
+
+    div:first-child {
+      align-items: flex-start;
+    }
+
+    h2 {
+      font-size: 1rem;
+      max-width: inherit;
+      margin-bottom: 0.25rem;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      background: ${({ theme }) => (theme.isLight ? `#e0cbee` : `#b880dd`)};
+      left: 0;
+      top: 1.25rem;
+      bottom: 1.25rem;
+      width: 2px;
+    }
+
+    > span:last-child {
+      display: inherit;
+    }
+  }
+`
+
+const APYChart = styled(DailyApys)`
+  position: relative;
+  overflow: hidden;
+  width: 8rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  transition: 0.5s;
+
+  :hover {
+    background: ${({ theme }) => theme.color.background[1]};
+    cursor: pointer;
+  }
+`
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 34rem;
+  width: 100%;
+`
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const InfoText = styled.p<{ large?: boolean }>`
+  font-size: ${({ large }) => (large ? `1.125rem` : `1rem`)} !important;
+  line-height: ${({ large }) => (large ? `2rem` : `1.5rem`)} !important;
+`
+
+const SaveBalance: FC = () => {
+  const stakingRewards = useStakingRewards()
+
+  const isNewUser = !stakingRewards.hasStakedBalance && !stakingRewards.hasUnstakedBalance
+
+  const balanceInfo = useMemo(() => {
+    if (stakingRewards.hasStakedBalance && !stakingRewards.hasUnstakedBalance) {
+      return [stakingRewards?.rewards?.find(v => v.id === 'yieldEntryWithRewards')]
+    }
+    return stakingRewards.rewards?.filter(rewards => rewards.priority) ?? []
+  }, [stakingRewards])
+
+  return (
+    <div>
+      {isNewUser && <h2>Start earning yield on your stablecoins.</h2>}
+      {balanceInfo.map(info => {
+        if (!info) return undefined
+        const { balance, apy, apyTip, stakeLabel, name } = info
+        return (
+          <InfoText key={name}>
+            {balance.exact.gt(0) ? 'Earning ' : `${stakeLabel} to earn `}
+            <Tooltip tip={apyTip}>
+              <span className="numeric">{apy.toFixed(2)}%</span> APY
+            </Tooltip>
+            &nbsp;{name}&nbsp;
+            {balance.exact.gt(0) && (
+              <>
+                on <CountUp className="numeric" end={balance.simple} decimals={2} prefix="$" />
+              </>
+            )}
+          </InfoText>
+        )
+      })}
+    </div>
+  )
+}
+
+export const PolygonSave: FC = () => {
+  const massetState = useSelectedMassetState()
+
+  const saveToken = massetState?.savingsContracts.v2.token
+  const [activeTab, setActiveTab] = useState<string>(Tabs.Deposit as string)
+
+  return (
+    <OnboardingProvider>
+      <StakingRewardsProvider stakingTokenAddress={saveToken?.address}>
+        <PageHeader title="Save" massetSwitcher />
+        {massetState ? (
+          <Container>
+            <Content>
+              <Card>
+                <SaveBalance />
+                <Link to="/musd/stats">
+                  <Tooltip tip="30-day yield APY chart" hideIcon>
+                    <APYChart
+                      hideControls
+                      shimmerHeight={80}
+                      tick={false}
+                      aspect={3}
+                      color="#b880dd"
+                      strokeWidth={1}
+                      hoverEnabled={false}
+                    />
+                  </Tooltip>
+                </Link>
+              </Card>
+              <TabCard tabs={tabs} active={activeTab} onClick={setActiveTab} />
+            </Content>
+          </Container>
+        ) : (
+          <ThemedSkeleton height={400} />
+        )}
+      </StakingRewardsProvider>
+    </OnboardingProvider>
+  )
+}

@@ -1,0 +1,94 @@
+{
+  "npmScope": "apps",
+  "affected": {
+    "defaultBase": "master"
+  },
+  "implicitDependencies": {
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "accessToken": "ODJmYzk3YWEtNGU2MS00MjU1LWExY2UtNWE4NThiOTgwMzA0fHJlYWQtd3JpdGU=",
+        "canTrackAnalytics": false,
+        "showUsageWarnings": true
+      }
+    }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "projects": {
+    "artifacts": {
+      "tags": []
+    },
+    "assets": {
+      "tags": []
+    },
+    "base": {
+      "tags": []
+    },
+    "bigdecimal": {
+      "tags": []
+    },
+    "boost": {
+      "tags": []
+    },
+    "data-provider": {
+      "tags": []
+    },
+    "dumb-components": {
+      "tags": []
+    },
+    "formatters": {
+      "tags": []
+    },
+    "governance": {
+      "tags": []
+    },
+    "hooks": {
+      "tags": []
+    },
+    "icons": {
+      "tags": []
+    },
+    "masset-hooks": {
+      "tags": []
+    },
+    "masset-provider": {
+      "tags": []
+    },
+    "masset-switcher": {
+      "tags": []
+    },
+    "merkle-claim": {
+      "tags": []
+    },
+    "protocol": {
+      "tags": []
+    },
+    "quick-maths": {
+      "tags": []
+    },
+    "react-utils": {
+      "tags": []
+    },
+    "transaction-manifest": {
+      "tags": []
+    },
+    "types": {
+      "tags": []
+    }
+  }
+}

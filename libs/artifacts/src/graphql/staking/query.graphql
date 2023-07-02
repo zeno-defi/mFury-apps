@@ -1,0 +1,169 @@
+# import './fragments.graphql'
+
+query Staking {
+  stakedTokens {
+    id
+    stakingToken {
+      ...TokenAll
+    }
+    token {
+      ...TokenAll
+    }
+  }
+}
+
+query Tokens {
+  tokens {
+    ...TokenAll
+  }
+}
+
+query Leaderboard($count: Int!, $skip: Int!) {
+  accounts(first: $count, skip: $skip, orderBy: totalVotesAll, orderDirection: desc) {
+    id
+    totalVotesAll
+    totalVotesAllBD @client
+  }
+}
+
+query Account($id: ID!) {
+  account(id: $id) {
+    id
+    lastAction
+    seasonMultiplier
+    permMultiplier
+    totalVotesAll
+    totalVotesFURY
+    totalVotesBPT
+    totalVotesBPTBD @client
+    totalVotesFURYBD @client
+    totalVotesAllBD @client
+    seasonMultiplierSimple @client
+    permMultiplierSimple @client
+    completedQuests {
+      id
+      completedAt
+      quest {
+        id
+      }
+    }
+    delegators {
+      id
+    }
+    stakedTokenAccounts {
+      id
+      stakedToken {
+        id
+        stakingToken {
+          symbol
+        }
+      }
+      delegatee {
+        id
+        totalVotesAll
+        totalVotesAllBD @client
+      }
+      balance {
+        id
+        raw
+        votes
+        timeMultiplier
+        questMultiplier
+        cooldownTimestamp
+        weightedTimestamp
+        cooldownUnits
+        rawBD @client
+        votesBD @client
+        timeMultiplierSimple @client
+        questMultiplierSimple @client
+        userPriceCoefficient
+      }
+    }
+  }
+}
+
+query StakedToken($id: ID!, $account: String!, $hasAccount: Boolean!) {
+  stakedToken(id: $id) {
+    id
+    token {
+      ...TokenAll
+    }
+    stakingToken {
+      ...TokenAll
+    }
+    stakingRewards {
+      DURATION
+      periodFinish
+      lastUpdateTime
+      rewardRate
+      rewardPerTokenStored
+      rewardsToken {
+        ...TokenAll
+      }
+      rewardsTokenVendor
+      rewardsDistributor
+      pendingAdditionalReward
+    }
+    UNSTAKE_WINDOW
+    COOLDOWN_SECONDS
+    collateralisationRatio
+    slashingPercentage
+    priceCoefficient
+    accounts(where: { account: $account }) @include(if: $hasAccount) {
+      id
+      delegatee {
+        id
+      }
+      rewardPerTokenPaid
+      rewards
+      balance {
+        timeMultiplier
+        cooldownTimestamp
+        cooldownUnits
+        questMultiplier
+        raw
+        votes
+        weightedTimestamp
+        rawBD @client
+        votesBD @client
+        timeMultiplierSimple @client
+        questMultiplierSimple @client
+        userPriceCoefficient
+      }
+    }
+  }
+}
+
+fragment QuestAll on Quest {
+  id
+  expiry
+  multiplier
+  status
+  type
+  season {
+    id
+  }
+}
+
+query Quests {
+  questManagers {
+    id
+    questMaster
+    questSigner
+  }
+  seasons {
+    id
+    seasonNumber
+    startedAt
+    endedAt
+  }
+  quests {
+    ...QuestAll
+  }
+}
+
+query Quest($id: ID!) {
+  quest(id: $id) {
+    ...QuestAll
+  }
+}

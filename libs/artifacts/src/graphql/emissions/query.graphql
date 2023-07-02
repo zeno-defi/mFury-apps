@@ -1,0 +1,93 @@
+fragment DialPreferences on Preference {
+  id
+  weight
+  voter {
+    id
+    address
+    votesCast
+  }
+}
+
+query Emissions($account: Bytes!, $hasAccount: Boolean!) {
+  emissionsControllers {
+    id
+    stakingContracts
+    dials {
+      id
+      dialId
+      recipient
+      balance
+      cap
+      disabled
+    }
+    lastEpoch {
+      id
+      weekNumber
+      emission
+      totalVotes
+      dialVotes {
+        dial {
+          id
+          dialId
+          cap
+          disabled
+        }
+        votes
+      }
+    }
+    startEpoch {
+      id
+      weekNumber
+    }
+    voters(where: { address: $account }) @include(if: $hasAccount) {
+      id
+      address
+      lastEpoch {
+        id
+        weekNumber
+      }
+      lastSourcePoke
+      votesCast
+      preferences {
+        id
+        weight
+        dial {
+          id
+          dialId
+        }
+      }
+    }
+  }
+}
+
+fragment EpochAll on Epoch {
+  id
+  weekNumber
+  emission
+  totalVotes
+  dialVotes {
+    id
+    votes
+    dial {
+      id
+      dialId
+      cap
+      disabled
+      preferences(first: 64, orderBy: weight, orderDirection: desc) {
+        ...DialPreferences
+      }
+    }
+  }
+}
+
+query SelectedCurrentEpoch {  
+  epoches(orderBy: weekNumber, orderDirection: desc, first: 1) {
+    ...EpochAll
+  }
+}
+
+query SelectedPreviousEpoch($weekNumber: Int!, $blockNumber: Int!) {
+  epoches(where: { weekNumber: $weekNumber }, first: 1, block: { number: $blockNumber }) {
+    ...EpochAll
+  }  
+}

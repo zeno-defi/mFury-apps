@@ -1,0 +1,199 @@
+config:
+  skipTypename: true
+  withComponent: false
+  withHOC: false
+  withHooks: true
+  scalars:
+    MstableBigDecimal: "@apps/bigdecimal#BigDecimal"
+    BigNumber: "ethers#BigNumber"
+    BigDecimal: string
+    BigInt: string
+    Bytes: string
+    Address: string
+    ID: string
+
+schema:
+  - ./libs/artifacts/src/graphql/shared/scalars.graphql
+
+generates:
+  ./libs/artifacts/src/graphql/questbook/schema.graphql:
+    overwrite: true
+    schema: https://europe-west1-mstable-questbook-staging.cloudfunctions.net/questbook
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/protocol/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-protocol-staging
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/feeders/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-feeder-pools-polygon
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/staking-rewards/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-rewards-polygon
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/blocks/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/snapshot/schema.graphql:
+    overwrite: true
+    schema: https://hub.snapshot.org/graphql
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/staking/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-kovan
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/merkle-drop/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-merkle-drop-kovan
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/emissions/schema.graphql:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-emissions-ropsten
+    plugins:
+      - 'schema-ast'
+    config:
+      includeDirectives: true
+
+  ./libs/artifacts/src/graphql/staking/apollo-helpers.ts:
+    overwrite: true
+    schema:
+      - https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-kovan
+      - ./libs/artifacts/src/graphql/staking/client.graphql
+    plugins:
+      - typescript-apollo-client-helpers
+
+  ./libs/artifacts/src/graphql/questbook/apollo-helpers.ts:
+    overwrite: true
+    schema:
+      - https://europe-west1-mstable-questbook-staging.cloudfunctions.net/questbook
+      - ./libs/artifacts/src/graphql/questbook/client.graphql
+    plugins:
+      - typescript-apollo-client-helpers
+
+  ./libs/artifacts/src/graphql/questbook.tsx:
+    overwrite: true
+    schema: https://europe-west1-mstable-questbook-staging.cloudfunctions.net/questbook
+    documents: 'libs/artifacts/src/graphql/questbook/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/protocol.tsx:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-protocol-staging
+    documents: 'libs/artifacts/src/graphql/protocol/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/feeders.tsx:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-feeder-pools-polygon
+    documents: 'libs/artifacts/src/graphql/feeders/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/staking-rewards.tsx:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-rewards-polygon
+    documents: 'libs/artifacts/src/graphql/staking-rewards/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/blocks.tsx:
+    overwrite: true
+    schema: https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks
+    documents: 'libs/artifacts/src/graphql/blocks/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/snapshot.tsx:
+    overwrite: true
+    schema: https://hub.snapshot.org/graphql
+    documents: 'libs/artifacts/src/graphql/snapshot/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/staking.tsx:
+    overwrite: true
+    schema:
+      - https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-kovan
+      - ./libs/artifacts/src/graphql/staking/client.graphql
+    documents: 'libs/artifacts/src/graphql/staking/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/merkle-drop.tsx:
+    overwrite: true
+    schema:
+      - https://api.thegraph.com/subgraphs/name/mstable/mstable-merkle-drop-kovan
+    documents: 'libs/artifacts/src/graphql/merkle-drop/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+
+  ./libs/artifacts/src/graphql/emissions.tsx:
+    overwrite: true
+    schema:
+      - https://api.thegraph.com/subgraphs/name/mstable/mstable-emissions-ropsten
+    documents: 'libs/artifacts/src/graphql/emissions/*.graphql'
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'

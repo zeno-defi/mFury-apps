@@ -1,0 +1,18 @@
+type Metric {
+  bigDecimal: MstableBigDecimal!
+}
+
+type StakedTokenBalance {
+  rawBD: MstableBigDecimal!
+  votesBD: MstableBigDecimal!
+  timeMultiplierSimple: Float!
+  questMultiplierSimple: Float!
+}
+
+type Account {
+  totalVotesBPTBD: MstableBigDecimal!
+  totalVotesFURYBD: MstableBigDecimal!
+  totalVotesAllBD: MstableBigDecimal!
+  permMultiplierSimple: Float!
+  seasonMultiplierSimple: Float!
+}

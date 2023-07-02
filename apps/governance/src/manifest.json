@@ -1,0 +1,6 @@
+{
+  "name": "mFury Governance",
+  "iconPath": "icons/mstable-logo.svg",
+  "description": "mFury Governance App",
+  "providedBy": { "name": "mFury", "url": "https://governance.metafury.app" }
+}

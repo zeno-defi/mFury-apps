@@ -1,0 +1,6 @@
+{
+  "name": "mFury",
+  "iconPath": "assets/icons/mstable-logo.svg",
+  "description": "mFury unites stablecoins, lending and swapping into one standard.",
+  "providedBy": { "name": "mFury", "url": "https://metafury.app" }
+}

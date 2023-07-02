@@ -1,0 +1,77 @@
+import { createContext, useContext, useState } from 'react'
+
+import { IncentivisedVotingLockup__factory } from '@apps/artifacts/typechain'
+import { useAccount, useSigner } from '@apps/base/context/account'
+import { useNetworkAddresses } from '@apps/base/context/network'
+import { BigDecimal } from '@apps/bigdecimal'
+import { providerFactory } from '@apps/context-utils'
+import { useFetchState } from '@apps/hooks'
+import { useAsync } from 'react-use'
+
+import type { FetchState } from '@apps/types'
+import type { FC } from 'react'
+
+export interface State {
+  hasWithdrawnV1Balance: boolean
+  hasSelectedStakeOption: boolean
+  lockedV1: FetchState<{
+    balance: BigDecimal
+    end?: number
+  }>
+}
+
+interface Dispatch {
+  setSelectedOption: () => void
+  setWithdrewV1Balance: () => void
+}
+
+const initialState: State = {
+  hasWithdrawnV1Balance: false,
+  hasSelectedStakeOption: false,
+  lockedV1: {},
+}
+
+const dispatchContext = createContext<Dispatch>(null as never)
+const stateContext = createContext<State>(null as never)
+
+export const StakingStatusProvider: FC = ({ children }) => {
+  const [state, setState] = useState<State>(initialState)
+  const [lockedV1, setLockedV1] = useFetchState<{
+    balance: BigDecimal
+    end: number
+  }>()
+
+  const networkAddresses = useNetworkAddresses()
+  const signer = useSigner()
+  const account = useAccount()
+
+  // TODO: Query via graphql instead (?)
+  useAsync(async () => {
+    if (!signer || !account || !!lockedV1?.value) return
+    setLockedV1.fetching()
+    const contract = IncentivisedVotingLockup__factory.connect(networkAddresses.vFURY, signer)
+    const data = await contract.locked(account)
+    const balance = new BigDecimal(data?.amount ?? 0)
+    const end = (data?.end?.toNumber() ?? 0) * 1e3
+    setLockedV1.value({ balance, end })
+  }, [account, lockedV1, networkAddresses.vFURY, setLockedV1, signer])
+
+  return providerFactory(
+    dispatchContext,
+    {
+      value: {
+        setSelectedOption: () => {
+          setState({ ...state, hasSelectedStakeOption: true })
+        },
+        setWithdrewV1Balance: () => {
+          setState({ ...state, hasWithdrawnV1Balance: true })
+        },
+      },
+    },
+    providerFactory(stateContext, { value: { ...state, lockedV1 } }, children),
+  )
+}
+
+export const useStakingStatus = (): State => useContext(stateContext)
+
+export const useStakingStatusDispatch = (): Dispatch => useContext(dispatchContext)

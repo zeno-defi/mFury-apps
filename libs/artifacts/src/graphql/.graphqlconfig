@@ -1,0 +1,107 @@
+{
+  "name": "mFury",
+  "projects": {
+    "protocol": {
+      "includes": ["./shared/*", "./protocol/*"],
+      "schemaPath": "remote-schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "default": {
+            "url": "https://api.thegraph.com/subgraphs/name/mstable/mstable-protocol-ropsten",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "feeders": {
+      "includes": ["./shared/*", "./feeders/*"],
+      "schemaPath": "remote-schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "default": {
+            "url": "https://api.studio.thegraph.com/query/32034/mstable-feeder-pools-and-vaults/v0.0.13",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "staking-rewards": {
+      "includes": ["./staking-rewards/*"],
+      "schemaPath": "remote-schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "polygon": {
+            "url": "https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-rewards-polygon",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "blocks": {
+      "includes": ["./shared/*", "./blocks/*"],
+      "extensions": {
+        "endpoints": {
+          "mainnet": {
+            "url": "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "snapshot": {
+      "includes": ["./shared/*", "./snapshot/*"],
+      "extensions": {
+        "endpoints": {
+          "mainnet": {
+            "url": "https://hub.snapshot.org/graphql",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "staking": {
+      "includes": ["./shared/*", "./staking/*"],
+      "extensions": {
+        "endpoints": {
+          "mainnet": {
+            "url": "https://api.thegraph.com/subgraphs/name/mstable/mstable-staking-kovan",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "merkle-drop": {
+      "includes": ["./shared/*", "./merkle-drop/*"],
+      "extensions": {
+        "endpoints": {
+          "ropsten": {
+            "url": "https://api.thegraph.com/subgraphs/name/mstable/mstable-merkle-drop-kovan",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "questbook": {
+      "includes": ["./shared/*", "./questbook/*"],
+      "extensions": {
+        "endpoints": {
+          "ropsten": {
+            "url": "https://us-central1-mstable-questbook-ropsten.cloudfunctions.net/questbook",
+            "introspect": false
+          }
+        }
+      }
+    },
+    "emissions": {
+      "includes": ["./shared/*", "./emissions/*"],
+      "extensions": {
+        "endpoints": {
+          "ropsten": {
+            "url": "https://api.thegraph.com/subgraphs/name/mstable/mstable-emissions-ropsten",
+            "introspect": false
+          }
+        }
+      }
+    }
+  }
+}

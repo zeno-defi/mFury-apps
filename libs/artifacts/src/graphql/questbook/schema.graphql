@@ -1,0 +1,67 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+scalar BigNumber
+
+scalar MstableBigDecimal
+
+type Mutation {
+  updateQuest(userId: ID!, questId: ID!): Quest!
+  updateQuests(userId: ID!): [Quest!]!
+  queueOptIn(userId: ID!, signature: String!): User!
+  queueOptOut(userId: ID!, signature: String!): User!
+}
+
+type Query {
+  quests(userId: ID): [Quest!]!
+  quest(questId: ID!, userId: ID): Quest
+  queue: [QuestCompletionQueueItem!]!
+  user(userId: ID!): User!
+}
+
+type Quest {
+  id: ID!
+  ethereumId: Int
+  requiredPoints: Float
+  objectives: [QuestObjective!]!
+  title: String!
+  description: String!
+  imageURI: String
+  userQuest(userId: ID!): UserQuest
+}
+
+type QuestCompletionQueueItem {
+  ethereumId: Int!
+  userId: ID!
+}
+
+type QuestObjective {
+  id: ID!
+  points: Float!
+  title: String!
+  description: String!
+}
+
+type User {
+  id: ID!
+  optInQueue: Boolean!
+  quests: [UserQuest!]!
+}
+
+type UserQuest {
+  id: ID!
+  complete: Boolean!
+  completedAt: Int
+  progress: Float
+  signature: String
+  objectives: [UserQuestObjective!]
+}
+
+type UserQuestObjective {
+  id: ID!
+  complete: Boolean!
+  completedAt: Int
+  progress: Float
+}
